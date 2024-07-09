@@ -298,4 +298,128 @@ To Diagonal a matrix, we could work as below
 - Let $Y=AX+\mu$, then $Y\sim N(\mu,\Sigma)$
 Can decompose any MVG in terms of a "Scaling" ($D$), "Rotation" ($Q$), and "Shift" ($\mu$)
 ***
+# Lecture 4
+*linear regression*
+## Regression
+- (reminder) Supervised ML: data pairs $D=\{(x_{i},y_{i})\}$, where $x_{i}$ mey be discrete and/or continus
+- Regression: label $y_{i}$ is a real-valued i.e. $y\in\mathbb{R}$
+- Formally, want $p(y|x)$, the conditional pdf
+- "Point" perdiction is then $\hat{y}=E_{Y}[p(Y|X=x)]$
 
+## Regression Examples
+- Covid infection rates from zip code and vaccination rate, etc.
+- How much a particular protain will bind to a drug target
+- A person's blood pressure from their genetics
+- Housing prices, crime rates, stock prices, etc.
+
+## Possible Regression Tactics
+- Our data are drawn from some certain distribution, $(X,Y)\sim p(x,y)$
+- What are possible strategies to estimate $p(x,y)$?
+	- Estimate $p(x,y|\theta)$, and then use fitted model to compute $p(y|x,\hat{\theta})=\frac{p(y,x|\hat{\theta})}{p(x|\hat{\theta})}=\frac{p(y,x|\hat{\theta})}{\int_{y}p(y,x|\hat{\theta})dy}$
+	- Consider the inputs to be fixed, and model only the output as a RV. That is, directly model the conditional $p(y|x,\hat{\theta})$
+
+## Linear Regression
+- Takes the discriminative approach
+- Predictions are a linear function of the parameters:
+	- $y=E_{Y}[p(y|x)]=w^{T}x+w_{0}$, for $w,x\in\mathbb{R}^{d}$
+- $w_{0}$ is called the "offset"/"bias"/"intercept"
+- instead of a bias, we could make an extra feature that is always 1, which is:
+	- $x'=[x,1]$, then $\hat{y}=w^{T}x'$
+
+## How useful can a linear model be?
+![[Pasted image 20240708212422.png]]
+- **For the first figure:** linear model, $\hat{y}=w^{T}x$
+- **For the second figure:** quadratic model, $\hat{y}=w^{T}[x,x^{2}]$
+- **For the third figure:** cubic model, $\hat{y}=w^{T}[x,x^{2},x^{3}]$
+
+## Basis expansion of raw input space
+$x\in\mathbb{R}^{d=2}=[x_{1},x_{2}]\rightarrow[1,x_{1},x_{2},x_{1}x_{2},x_{1}^{2},x_{2}^{2}]\in\mathbb{R}^{k=6}$
+*Polynomial expansion of order 2*
+- Denote basis expansions of the raw input features: $\Phi(x):\mathbb{R}^{d}\rightarrow\mathbb{R}^{k}$
+- For $d=1$, polynomial expansion of order $k=2,3$:
+	- For a quadratic expansion, $\Phi(x)=[1,x,x^{2}]$, and $k=2$
+	- For a cubic expansion, $\Phi(x)=[1,x,x^{2},x^{3}]$, and $k=3$
+	- For a linear/identity basis expansion, $\Phi(x)=x$, and $k=d$
+then we have $\hat{y}=w^{T}\Phi(x)$, for $w\in\mathbb{R}^{k}, x\in\mathbb{R}^{d}$ (*in this lecture, we assume the expansion has already been done, so simply write $\hat{y}=w^{T}x$*)
+
+## Basis possible functions
+- Polynomials: $f(x)=w^{T}x$
+- Radial Basis Functions
+- Fovrier Basis
+- Wavelets
+
+## Specific from of linear regression
+- So far we said linear regression is $\hat{y}=E_{Y}[p(y|x)]=w^{T}x$
+- But what do we use for $p(y|x)$
+- Standard linear regression uses a Gaussian $p(y|x)=N(y|w^{T}x,\sigma^{2})$
+- Equivalent to $Y=w^{T}x+\epsilon$, $\epsilon\sim N(0,\sigma^{2})$
+- Which is equivalent to $Y-w^{T}x=\epsilon\sim N(0,\sigma^{2})$
+- Alternate forms give “heavier tails” to the distribution of the “residual”.
+
+## Heavy-tailed distribution
+![[Pasted image 20240708220759.png]]
+- More of the mass lies further from the center of mass
+- Heavy-tailed noise model outliers better than a Gaussian
+	- Normal Distribution: $Y-w^{T}x=\epsilon\sim N(0,\sigma^{2})$
+	- Heavy-Tailed Distribution: $Y-w^{T}x=\epsilon\sim N(0,\sigma^{2})$
+
+## Gaussian linear regression, $p(y|x)=N(y|w^{T}x,\sigma^{2})$
+For every value $X=x$, the target variable $Y$, takes on a Gaussian distribution with the same varience $\sigma^{2}$
+![[Pasted image 20240708221940.png]]
+
+## Training a Gaussian linear regression model
+we use MLE to fit the regression model
+$\theta_{MLE}=(w_{MLE}, \sigma^{2}_{MLE})=\text{arg}\max\limits_{(w,\sigma^{2})}\log p(D=\{(x_{i},y_{i})^{n}_{i=1}\}|\theta)$
+$=\text{arg}\max\limits_{(w,\sigma^{2})}\sum\limits_{i=1}^{n}\log p(y_{i}|x_{i},\theta)$
+$=\text{arg}\max\limits_{(w,\sigma^{2})}\sum\limits_{i=1}^{n}\log N(y_{i}|w^{T}x_{i},\theta)$
+$=\text{arg}\max\limits_{(w,\sigma^{2})}\sum\limits_{i=1}^{n}\log\left(\frac{1}{\sqrt{2\pi\sigma^{2}}}\right)-\frac{1}{2\sigma^{2}}\sum\limits_{i=1}^{n}(y_{i}-w^{T}x_{i})^{2}$
+if we assume $\sigma^{2}$ is known, then
+$=\mathbf{\text{arg}\max\limits_{(w,\sigma^{2})}}\sum\limits_{i=1}^{n}\log\left(\frac{1}{\sqrt{2\pi\sigma^{2}}}\right)-\frac{1}{2\sigma^{2}}\mathbf{\sum\limits_{i=1}^{n}(y_{i}-w^{T}x_{i})^{2}}$
+that means we need to find the minimun of $\sum\limits_{i=1}^{n}(y_{i}-w^{T}x_{i})^{2}$
+that is $\text{arg}\min\limits_{w}\sum\limits_{i=1}^{n}(y_{i}-\hat{y_{i}})^{2}$ (*least squares loss function*)
+First, we have:
+$$
+\displaylines{
+\left(\begin{matrix}y_{1}-w^{T}x_{i}\\ \vdots \\ y_{n}-w^{T}x_{n} \end{matrix}\right) = \left(\begin{matrix}y_{1}\\ \vdots \\ y_{n} \end{matrix}\right) - \left(\begin{matrix}w^{T}x_{i}\\ \vdots \\ w^{T}x_{n} \end{matrix}\right) = \left(\begin{matrix}y_{1}\\ \vdots \\ y_{n} \end{matrix}\right) - \left(\begin{matrix}x_{i}^{T}w\\ \vdots \\ x_{n}^{T}w \end{matrix}\right) = y - \left(\begin{matrix}x_{i}^{T}\\ \vdots \\ x_{n}^{T} \end{matrix}\right)w = y - Aw
+}
+$$
+A is called the "design matrix"
+
+then $\text{arg}\min\limits_{w}(y-\hat{y_{i}})^{2}=\text{arg}\min\limits_{w}(y-Aw)^{T}(y-Aw)$
+$L=(y-Aw)^{T}(y-Aw)=y^{T}y-w^{T}A^{T}y-y^{T}Aw+w^{T}A^{T}Aw$
+
+when $L$ reaches the minimum, we have:
+$\frac{\partial L}{\partial w}=A^{T}(Aw-y)=0$
+since the matrix $A$ might be rectangular so normally we don't have $A^{-1}$, but!
+$(A^{T}A)^{-1}A^{T}A=I$, then we have:
+$w=(A^{T}A)^{-1}A^{T}y$
+
+**BUT!** there is one more thing to do: whether $w=(A^{T}A)^{-1}A^{T}y$ is minimum of the squared error loss?
+$\triangledown^{2}_{w}L$ is $2A^{T}A$, when is $A^{T}A$ PD?
+when $A^{T}A$ is full rank
+$\sigma^{2}$ from MLE ad well is just the mean of squared residual, $\sigma^{2}=\frac{1}{N}\sum_{i}(y_{i}-w^{T}x)^{2}$
+
+## Geometric view of linear regression, $y=Aw$
+- we think about the error vector: $e\equiv y-Aw$
+- the best fit model should minimize the length of $e$
+- that is to say $e$ lies $\perp$ to column space of $A$
+- then $A^{T}e=0=A^{T}(y-Aw)$
+- $A^{T}y=A^{T}Aw$
+- $w=(A^{T}A)^{-1}A^{T}y$, same as MLE result
+![[Pasted image 20240709171457.png]]
+
+## What can go wrong with linear regression?
+- When can we invert $A^{T}A$?
+	- $A^{T}A=Q\Lambda Q^{T}$, then $(A^{T}A)^{-1}=Q\Lambda^{-1}Q^{T}$, so if $A^{T}A$ has any zero eigenvalues, then we can't invert it (there are infinite good solution $w$ then)
+	- This occurs when the features in $A$, for the given data $\{x_{}j\}$ are linearly dependent
+	- (but could use Moore-Penrose pseudo inverse)
+	- e.g. when $d>n$
+- As we add higher and higher order polynomials, a few things happen:
+	- features $d$ getting bigger and bigger
+	- for $d\geq n$ can perfectly fit any data (**danger!**)
+	- Even when we don’t perfectly fit the training data, we are still in danger of overfitting (worse prediction on test set). Our goal is not to fit a line through the training data exactly, it is to do well on unseen test cases!
+- Two main categories of fixes
+	- remove features until the problem is well behaved (“feature selection”, e.g. “forward selection”, “backward selection”, etc.)
+	- Leave the features as they are but add constraints to the system to “tighten it up” (aka “regularization”).
+*(Moore-Penrose inverse is not a general fix for ML models, only works for linear regression.)*
+***
