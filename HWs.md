@@ -1,6 +1,7 @@
 *I certify that all solutions are entirely in my own words and that I have not looked at another student’s solutions. I have given credit to all external sources I consulted*
 
-# Problem 1
+# HW1
+## Problem 1
 First, we defined the **derivative** and **gradient** of a function of a scalar/vector/matrix, which is as below
 - for scalar, the gradient and the derivative are the same, which is $\frac{df}{dx}$
 - for vector, the gradient  $[\triangledown_{\mathbf{X}}f(\mathbf{X})]_{i}=\frac{\partial f}{\partial X_{i}}(\mathbf{X})$, and the derivative is $[\triangledown_{\mathbf{X}}f(\mathbf{X})]^{T}$
@@ -77,7 +78,7 @@ $\therefore [\triangledown_{\mathbf{X}}^{2}f(\mathbf{X})]_{ij} = \frac{\partial^
 $\begin{cases} -\frac{e^{x_{i}e_{x_{j}}}}{(\sum\limits^{n}_{i=1}e^{x_{i}})^{2}} \quad i\neq j \\ \frac{e^{x_{i}}}{\sum\limits^{n}_{i=1}e^{x_{i}}}-\frac{e^{x_{i}e_{x_{j}}}}{(\sum\limits^{n}_{i=1}e^{x_{i}})^{2}} i=j \end{cases}$
 $\therefore \triangledown_{\mathbf{X}}^{2}f(\mathbf{X}) = diag(\frac{e^{\mathbf{x}}}{\sum\limits^{n}_{i=1}e^{x_{i}}})-\frac{e^{\mathbf{x}}(e^{\mathbf{x}})^{T}}{(\sum\limits^{n}_{i=1}e^{x_{i}})^{2}}$
 
-# Problem 2
+## Problem 2
 
 **1.** Let $\mathbf{A}$ be a symmetric matrix. Prove equilance between these different definitions of positive semidefiniteness (PSD)
 (a) For all $\mathbf{x}\in\mathbb{R}^{n}$, $\mathbf{x}^{T}\mathbf{A}\mathbf{x}\ge0$
@@ -138,7 +139,7 @@ $||\mathbf{A}||_{F}=\sqrt{Tr(\mathbf{AA}^{T})}$
 $\mathbf{x^{T}Ax} = \sum\limits_{i=1}^{n}x_{i}^{2}\lambda_{i}\le \sum\limits_{i=1}^{n}x_{i}^{2}\lambda_{max}=\lambda_{max}$ only when $x=(0,...,1,...0)$, the $1$ appears at the $i_{max \lambda index}$-th entry
 
 
-# Problem 3
+## Problem 3
 
 **1.** Prove that the covariance matrix is always positive semidefinate
 $\Sigma = \mathbb{E}[(Z-\mu)(Z-\mu)^{T}]$
@@ -181,7 +182,7 @@ then $X+Y\sim\text{Poi}(\lambda+\mu)$
 then $\mathbb{P}(X=k|X+Y=n)=\frac{P(X=k)P(Y=n-k)}{P(X+Y=k)}=\frac{\frac{\lambda^{k}e^{-\lambda}}{k!}\frac{\mu^{n-k}e^{-\mu}}{(n-k)!}}{\frac{(\lambda+\mu)^{n}e^{-(\lambda+\mu)}}{n!}}=\frac{n!}{k!(n-k)!}\left(\frac{\lambda}{\lambda+\mu}\right)^{k}\left(\frac{\mu}{\lambda+\mu}\right)^{n-k}$
 it is a **Binomial Distribution** with parameters $n$ and $p=\frac{\lambda}{\lambda+\mu}$
 
-# Problem 4
+## Problem 4
 
 (a) Let $X\sim N(\mu,\Sigma)$. Show that $\mathbb{E}(X)=\mu$
 **Proof:**
@@ -223,7 +224,7 @@ then for $Y=P^{-1}\Lambda^{-\frac{1}{2}}(X-\mu)$:
 $Y\sim N(0,I_{d})$
 
 
-# Problem 5
+## Problem 5
 
 (a) Implement `special_reshape`, which takes an ndarray with an arbitrary number of dimensions and reduces it to 2 dimensions, so that the first $n − 1$ dimensions of the input get combined into the first output dimension, and the last dimension of the input gets preserved in the output. For example, an input ndarray of shape `(3, 7, 2, 9)` will result in an output ndarray of shape `(42, 9)`. More examples are given in the function signature.
 ```
@@ -265,7 +266,7 @@ def two_layer_nn(W1: ndarray, b1: ndarray, W2: ndarray, b2: ndarray, x: ndarray)
 ```
 
 
-# Problem 6
+## Problem 6
 
 Let $f(\mu,\Sigma)$ be the probability density function of a normally distributed random variable in $\mathbb{R}^{2\times2}$
 
@@ -316,6 +317,6 @@ if __name__ == '__main__':
 ```
 
 
-# Problem 7
+## Problem 7
 No data :(
 ***
