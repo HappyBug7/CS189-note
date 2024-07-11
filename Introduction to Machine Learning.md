@@ -423,3 +423,50 @@ $\sigma^{2}$ from MLE ad well is just the mean of squared residual, $\sigma^{2}=
 	- Leave the features as they are but add constraints to the system to “tighten it up” (aka “regularization”).
 *(Moore-Penrose inverse is not a general fix for ML models, only works for linear regression.)*
 ***
+# Lecture 5
+ *linear regression part II*
+## Intuition of why $\infty$ of $w_{MLE}$ solutions
+Suppose we have 2 linearly dependent features in the training data such that $\alpha x_{1}= x_{2}$
+Suppose we found one MLE solution $\hat{w}$
+then for any training data point, $\hat{y}=x^{T}\hat{w}=\left[\begin{matrix}x_{1}&x_{2}\end{matrix}\right]\left[\begin{matrix}\hat{w}_{1}\\\hat{w}_{2}\end{matrix}\right]$
+$=\hat{w}_{1}x_{1}+\hat{w}_{2}x_{2}=\hat{w}_{1}x_{1}+\alpha\hat{w}_{2}x_{1}$
+$=(\hat{w}_{1}+\alpha\hat{w}_{2})x_{1}$
+$=(\hat{w}_{1}+\beta+\alpha\hat{w}_{2}-\beta)x_{1}$, for any $\beta\in\mathbb{R}^{n}$
+$=(\hat{w}_{1}+\beta)x_{1}+\frac{(\alpha\hat{w}_{2}-\beta)}{\alpha}x_{2}$
+$=\left[\begin{matrix}x_{1}&x_{2}\end{matrix}\right]\left[\begin{matrix}\hat{w}_{1}+\beta\\\hat{w}_{2}-\frac{\beta}{\alpha}\end{matrix}\right]=x^{T}\tilde{w}$
+Thus there exists $\infty$ $\hat{w}_{MLE}$
+
+## Intuition for choosing one specific $\hat{w}$
+Of the $\infty$ solutions for $w_{MLE}$, choose the one with the least norm, $||w_{MLE}||_{2}$, why might this be a good idea?
+- Smaller norm tends to have smaller individual values
+- We don't expect co-lineary of features with test data
+Consider prediction, $\hat{y}=w^{T}x$. How much does the prediction change when we perturb, $x'=x+\delta$ for different norm?
+With smaller coefficients the model is less sensitive to noise.
+What about in non-degenerate linear regression ( $A^{T}A$is invertible)?
+- For many problems (and models), small param norm is a good idea.
+
+## Regularized linear regression
+To shrink $w$ to be smaller than the MLE solution, we add a "penalty" term to the loss function:
+$L=(y-Aw)^{T}(y-Aw)+\lambda||w||_{2}^{2}$
+$w_{L_{2}}=\text{arg}\min\limits_{w}(y-Aw)^{T}(y-Aw)+\lambda||w||_{2}^{2}$
+Also called "Ridge" regression, or L2 linear regression.
+Related to *Bayesian* modelling.
+
+## The Bayesian modelling approach
+- Bayesians put a prior distibution on the parameters $p(\theta)$
+- Then they seek to compute the posterior distribution $p(\theta|D)$
+- Then predictive distribution is given by
+	-  $p(y|x)=\int_{\theta}p(y|x,\theta)p(\theta|D)d\theta=E_{\theta}[p(y|x,\theta)]$
+- Procedurally, this is done using Bayes' rule:
+	- $p(\theta|D)=\frac{p(D|\theta)p(\theta)}{p(D)}$
+- But it is difficult in practice $p(D)=\int_{\theta}p(D,\theta)=\int_{\theta}p(D|\theta)p(\theta)d\theta$
+- So we will be lazy, instead being pseudo Bayesians, we yeild L2 regression using: 
+	- $\theta_{lazy}=\text{arg}\max\limits_{\theta} p(\theta|D)$ *Maximum A Posteriori (MAP) estimation*
+
+## MAP: the lazy Bayesian (*Maximum A Posteriori*)
+- Still use a prior over parameters, $p(\theta)$
+- Finds point estimate of the parameter that maximizes the posterior.
+- $\theta_{MAP}=\text{arg}\max\limits_{\theta}p(\theta|D)$
+	- $=\text{arg}\max\limits_{\theta}\frac{p(D|\theta)p(\theta)}{\cancel{p(D)}}$
+	- $=\text{arg}\max\limits_{\theta}p(D|\theta)p(\theta)$
+then $p(D)=\int_{\theta}p(D,\theta)d\theta=\int_{\theta}p(D|\theta)p(\theta)d\theta$
