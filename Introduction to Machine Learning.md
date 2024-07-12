@@ -470,3 +470,52 @@ Related to *Bayesian* modelling.
 	- $=\text{arg}\max\limits_{\theta}\frac{p(D|\theta)p(\theta)}{\cancel{p(D)}}$
 	- $=\text{arg}\max\limits_{\theta}p(D|\theta)p(\theta)$
 then $p(D)=\int_{\theta}p(D,\theta)d\theta=\int_{\theta}p(D|\theta)p(\theta)d\theta$
+
+## A prior for small weights yields L2 regress
+- Zero-mean prior: $p(w)=N(w;0,\lambda I)$
+- Bayesian posterior, $p(w|D)=\frac{p(D|w)p(w)}{p(D)}$ is then "nice" in that everything is Gaussian (can work it out using MVGs)
+
+## MAP for linear regression $w$ Gaussian prior
+$w_{MAP} = \text{arg}\max\limits_{w}\log p(D|w)p(w) = \text{arg}\max\limits_{w}- \frac{1}{2\sigma^{2}}(y-Aw)^{T}(y-Aw)-\sum\limits_{i=1}^{d}(-\log\frac{1}{\sqrt{2\pi\lambda}}+\frac{w_{i}}{2\lambda})$
+$=\text{arg}\min\limits_{w}\frac{1}{2\sigma^{2}}(y-Aw)^{T}(y-Aw)+\frac{1}{2\lambda}||w||_{2}^{2}$
+$=\text{arg}\min\limits_{w}(y-Aw)^{T}(y-Aw)+\frac{\sigma^{2}}{\lambda}||w||_{2}^{2}$
+$\frac{\partial (y-Aw)^{T}(y-Aw)+\frac{\sigma^{2}}{\lambda}||w||_{2}^{2}}{\partial w}=-2y^{T}A+2w^{T}A^{T}A+\frac{2\sigma^{2}}{\lambda}w^{T}$
+then $\triangledown_{w}L_{MAP}=-2A^{T}y+2A^{T}Aw+\frac{2\sigma^{2}}{\lambda}w$
+let $\triangledown_{w}L_{MAP}=0$, then
+$w_{L_{2}}=(A^{T}A+\frac{\sigma^{2}}{\lambda}I)^{-1}A^{T}y=(A^{T}A+\lambda'I)^{-1}A^{T}y$
+![[Pasted image 20240712153452.png]]
+
+## Effect of value of $\lambda(\lambda')$
+$L_{MAP}=(y-Aw)^{T}(y-Aw)+\lambda||w||_{2}^{2}$
+- Practically, how should we set $\lambda$?
+- Can we treat it as a parameter in the loss, and minimize wrt it? (No: can't use MLE)
+- Need independent data, a validation set on which to evaluate the loss.
+
+## Train/validation/test split
+- Find value of hyperparam that is best on the validation set.
+- Asses performance on the test data.
+How to assess? Compute the log likelihood of the validation/train data (so also estimate $\hat{\sigma}^{2}$).
+
+## K-fold cross-validation
+![[Pasted image 20240712154551.png]]
+
+
+## $L_{1}$-penalized linear regression (*Lasso*)
+- $W_{L_{1}}=\text{arg}\min\limits_{w}(y-Aw)^{T}(y-Aw)+\lambda||w||_{1}$
+- Why does the $L_{1}$ norm penalty tends to induce sparse $w$?
+- Equivalent to MLE with constraint $||w||_{1}<\text{constant}$
+- "Pointy” constraint surface is jutting out along the axes.
+- In many cases, the $L_{1}$ norm constraint will cause the unconstrained solution to intersect the constraint at a corner
+- The corners are where some coefficients are 0, which is a sparse solution.![[Pasted image 20240712155528.png]]
+
+## MAP interpretation for Lasso/$L_{1}$-penalized linear regression
+- $L_{2}$ regression arose from a $N(0,\lambda I)$ prior
+- Is there a prior corresponding to $L_{1}$
+- Technically, the Laplace prior, $p(w)=\exp(-\lambda||w||_{1})$
+
+## Combine $L_{1}$ and $L_{2}$ penalties?
+Yes, “elastic net regression"
+![[Pasted image 20240712160129.png]]
+Issues with LASSO:
+- When $d>>N$ , will select no more than $N$ features
+- If highly correlated features, tends to ignore all but one
